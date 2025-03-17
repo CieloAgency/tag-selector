@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Tag Selector </title>
+    <style>
+        :root {
+            --primary: #ff6b6b;
+            --primary-dark: #ee5253;
+            --secondary: #48dbfb;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #dfe6e9;
+            --success: #1dd1a1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .tab-container {
+            margin-bottom: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--gray);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .category-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        h3 {
+            margin-bottom: 16px;
+            color: var(--primary-dark);
+            text-transform: capitalize;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tag-button {
+            background-color: var(--gray);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 16px;  /* Increased from 14px */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: capitalize;  /* Added for button text capitalization */
+        }
+        
+        .tag-button.selected {
+            background-color: var(--secondary);
+            color: var(--dark);
+            font-weight: bold;
+        }
+        
+        .result-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            bottom: 20px;
+        }
+        
+        .result-content {
+            background-color: var(--gray);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 60px;
+            margin-bottom: 16px;
+            word-wrap: break-word;
+            font-size: 16px;  /* Added for result text size */
+        }
+        
+        .copy-button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .copy-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .copy-button.copied {
+            background-color: var(--success);
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .category-section {
+                padding: 15px;
+            }
+            
+            .tag-button {
+                font-size: 15px;  /* Increased from 13px for mobile */
+                padding: 8px 14px;  /* Slightly increased padding */
+            }
+        }
+
+        .language-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .language-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--gray);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .language-button.active {
+            background-color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Content Tag Selector</h1>
+            <p>Select tags for your content by clicking on them</p>
+            
+            <div class="language-selector">
+                <button id="lang-en" class="language-button active">English</button>
+                <button id="lang-es" class="language-button">Español</button>
+            </div>
+        </header>
+        
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="categorized">Content Tags</button>
+                <button class="tab-button" data-tab="profile">Profile Tags</button>
+            </div>
+            
+            <div class="tab-content active" id="categorized-content">
+                <!-- Content tags will be dynamically inserted here -->
+            </div>
+            
+            <div class="tab-content" id="profile-content">
+                <!-- Profile tags will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <h3>Selected Tags</h3>
+            <div class="result-content" id="result">Select tags to see them here</div>
+            <button class="copy-button" id="copyButton">Copy Tags</button>
+        </div>
+    </div>
+    
+    <script>
+        // Tag data
+        const CATEGORIZED_TAGS = {
+            "clothing_and_dress": [
+                "panties", "thong", "bikini", "bodysuit", "crop_top", 
+                "miniskirt", "high_heels", "garter_belt"
+            ],
+            "sexual_acts": [
+                "masturbation", "squirting", "blow_job", "hand_job", "foot_job",
+                "cumshot", "facial", "bukkake", "creampie", "anal", "explicit_sex"
+            ],
+            "toys_and_objects": [
+                "toys", "dildo", "vibrator", "pegging", "handcuffs"
+            ],
+            "fetishes_and_kinks": [
+                "foot_fetish", "bdsm", "bondage", "dominatrix",
+                "submissive", "femdom", "roleplay", "furry"
+            ],
+            "cosplay_and_roles": [
+                "cosplay", "schoolgirl", "nurse", "maid", "teacher", "office_girl"
+            ],
+            "accessories": [
+                "glasses", "stockings", "fishnets", "lingerie", "latex", "leather", "harness"
+            ],
+            "content_format": [
+                "amateur", "professional", "selfie", "pov", "hidden_cam",
+                "solo", "couple", "threesome", "group"
+            ],
+            "location_and_scenario": [
+                "public", "outdoor", "bathroom", "shower", "beach",
+                "forest", "park", "rooftop", "balcony", "car",
+                "bus", "train", "plane", "bedroom", "hotel_room", "studio_shoot", "candlelit", "bathtub"
+            ],
+            "positions_and_body_focus": [
+                "boob_play", "boob_drop", "face_sitting", "reverse_cowgirl", "doggystyle", "missionary", "cowgirl", "legs_spread", "legs_crossed", "on_all_fours", "bent_over", "back_arch", 
+                "side_pose", "hand_on_hip", "grabbing_breast", "grabbing_ass", "touching_thighs", "spreading_cheeks", "cameltoe_focus", "cleavage_focus", "abs_focus", "thigh_gap"
+            ],
+            "media_type": [
+                "image/picture", "video", "gif"
+            ],
+            "nudity_level": [
+                "non_nude", "topless", "fully_nude", "censored"
+            ],
+            "visible_body_parts": [
+                "ass_visible", "asshole_visible", "pussy_visible", "tits_visible", "focus_on_eyes", "focus_on_mouth", "pennis_visible", "focus_on_feet"
+            ]
+        };
+
+        const PROFILE_TAGS = {
+            "hair_color": [
+                "blonde_hair", "brown_hair","black_hair", "silver_hair", "white_hair",
+                "blue_hair", "green_hair", "purple_hair", "pink_hair", "orange_hair"
+            ],
+            "hair_length": [
+                "bald", "short_hair", "medium_hair", "long_hair"
+            ],
+            "age": [
+                "young_adult", "adult", "milf"
+            ],
+            "aesthetic_styles": [
+                "goth", "emo", "alt_girl", "punk", "nerdy", "gamer_girl"
+            ],
+            "unique_features": [
+                "freckles", "braces", "shaved_head",
+                "big_areolas", "lactation", "hairy"
+            ],
+            "tattoos_and_piercings": [
+                "tattooed", "pierced", "nipple_piercing",
+                "tongue_piercing", "belly_piercing"
+            ],
+            "skin_tone": [
+                "white_skin", "fair_skin", "tan_skin", "olive_skin", "dark_skin", "brown_skin"
+            ],
+            "ethnicity": [
+                "latina", "asian", "ebony", "caucasian", "middle_eastern", "native_american", "mixed"
+            ],
+            "nationality": [
+                "argentinian", "colombian", "brazilian", "venezuelan", "chilean"
+            ],
+            "height": [
+                "petite", "tall", "average_height"
+            ],
+            "body_type": [
+                "slim_body", "curvy_body", "thick_body", "hourglass_body", "bbw_body", "fit_body"
+            ],
+            "bust_size": [
+                "small_boobs", "medium_boobs", "large_boobs", "fake_tits", "natural_tits", "perky_tits"
+            ],
+            "butt_and_hips": [
+                "small_butt", "tight_butt", "big_butt", "thick_ass", "wide_hips"
+            ]
+        };
+
+        // Add translations object
+        const TRANSLATIONS = {
+            "es": {
+                // Category translations
+                "categories": {
+                    "clothing_and_dress": "Ropa y vestimenta",
+                    "sexual_acts": "Actos sexuales",
+                    "toys_and_objects": "Juguetes y objetos",
+                    "fetishes_and_kinks": "Fetiches y kinks",
+                    "cosplay_and_roles": "Cosplay y roles",
+                    "accessories": "Accesorios",
+                    "content_format": "Formato de contenido",
+                    "location_and_scenario": "Ubicación y escenario",
+                    "positions_and_body_focus": "Posiciones y enfoque corporal",
+                    "media_type": "Tipo de medio",
+                    "nudity_level": "Nivel de desnudez",
+                    "visible_body_parts": "Partes del cuerpo visibles",
+                    "hair_color": "Color de pelo",
+                    "hair_length": "Longitud del pelo",
+                    "age": "Edad",
+                    "aesthetic_styles": "Estilos estéticos",
+                    "unique_features": "Características únicas",
+                    "tattoos_and_piercings": "Tatuajes y piercings",
+                    "skin_tone": "Tono de piel",
+                    "ethnicity": "Etnia",
+                    "nationality": "Nacionalidad",
+                    "height": "Altura",
+                    "body_type": "Tipo de cuerpo",
+                    "bust_size": "Tamaño del busto",
+                    "butt_and_hips": "Trasero y caderas"
+                },
+                // UI translations
+                "ui": {
+                    "Content Tag Selector": "Selector de Etiquetas de Contenido",
+                    "Select tags for your content by clicking on them": "Selecciona etiquetas para tu contenido haciendo clic en ellas",
+                    "Content Tags": "Etiquetas de Contenido",
+                    "Profile Tags": "Etiquetas de Perfil",
+                    "Selected Tags": "Etiquetas Seleccionadas",
+                    "Select tags to see them here": "Selecciona etiquetas para verlas aquí",
+                    "Copy Tags": "Copiar Etiquetas",
+                    "✓ Copied!": "✓ ¡Copiado!"
+                },
+                // Tag translations
+                "tags": {
+                    // Clothing and dress
+                    "panties": "bragas (panties)",
+                    "thong": "tanga",
+                    "bikini": "bikini",
+                    "bodysuit": "body (bodysuit)",
+                    "crop_top": "top corto",
+                    "miniskirt": "minifalda",
+                    "high_heels": "tacones altos",
+                    "garter_belt": "liguero (garter_belt)",
+                    
+                    // Sexual acts
+                    "masturbation": "masturbación",
+                    "squirting": "squirting",
+                    "blow_job": "sexo oral",
+                    "hand_job": "masturbación manual",
+                    "foot_job": "masturbación con pies",
+                    "cumshot": "corrida (cumshot)",
+                    "facial": "facial",
+                    "bukkake": "bukkake",
+                    "creampie": "creampie",
+                    "anal": "anal",
+                    "explicit_sex": "sexo explícito",
+                    
+                    // Toys and objects
+                    "toys": "juguetes",
+                    "dildo": "consolador",
+                    "vibrator": "vibrador",
+                    "pegging": "pegging",
+                    "handcuffs": "esposas",
+                    
+                    // Fetishes and kinks
+                    "foot_fetish": "fetiche de pies",
+                    "bdsm": "bdsm",
+                    "bondage": "bondage",
+                    "dominatrix": "dominatrix",
+                    "submissive": "sumisa",
+                    "femdom": "femdom",
+                    "roleplay": "juego de roles",
+                    "furry": "furry",
+                    
+                    // Cosplay and roles
+                    "cosplay": "cosplay",
+                    "schoolgirl": "colegiala",
+                    "nurse": "enfermera",
+                    "maid": "mucama",
+                    "teacher": "profesora",
+                    "office_girl": "oficinista",
+                    
+                    // Accessories
+                    "glasses": "gafas",
+                    "stockings": "medias",
+                    "fishnets": "medias de red",
+                    "lingerie": "lencería",
+                    "latex": "látex",
+                    "leather": "cuero",
+                    "harness": "arnés",
+                    
+                    // Content format
+                    "amateur": "amateur",
+                    "professional": "profesional",
+                    "selfie": "selfie",
+                    "pov": "pov",
+                    "hidden_cam": "cámara oculta",
+                    "solo": "solo",
+                    "couple": "pareja",
+                    "threesome": "trío",
+                    "group": "grupo",
+                    
+                    // Location and scenario
+                    "public": "público",
+                    "outdoor": "al aire libre",
+                    "bathroom": "baño",
+                    "shower": "ducha",
+                    "beach": "playa",
+                    "forest": "bosque",
+                    "park": "parque",
+                    "rooftop": "azotea",
+                    "balcony": "balcón",
+                    "car": "coche",
+                    "bus": "autobús",
+                    "train": "tren",
+                    "plane": "avión",
+                    "bedroom": "dormitorio",
+                    "hotel_room": "habitación de hotel",
+                    "studio_shoot": "sesión de estudio",
+                    "candlelit": "a la luz de las velas",
+                    "bathtub": "bañera",
+                    
+                    // Positions and body focus
+                    "boob_play": "juego con pechos",
+                    "boob_drop": "caída de pechos (boob drop)",
+                    "face_sitting": "sentada en la cara",
+                    "reverse_cowgirl": "invertida (reverse cowgirl)",
+                    "doggystyle": "perrito (doggystyle)",
+                    "missionary": "misionero",
+                    "cowgirl": "cowgirl",
+                    "legs_spread": "piernas abiertas",
+                    "legs_crossed": "piernas cruzadas",
+                    "bent_over": "inclinada (bent_over)",
+                    "back_arch": "espalda arqueada",
+                    "side_pose": "pose de lado",
+                    "hand_on_hip": "mano en la cadera",
+                    "grabbing_breast": "agarrando pecho",
+                    "grabbing_ass": "agarrando trasero",
+                    "touching_thighs": "tocando muslos",
+                    "spreading_cheeks": "separando nalgas",
+                    "cameltoe_focus": "enfoque en cameltoe",
+                    "cleavage_focus": "enfoque en escote",
+                    "abs_focus": "enfoque en abdominales",
+                    "thigh_gap": "espacio entre muslos",
+                    
+                    // Media type
+                    "image/picture": "imagen/foto",
+                    "video": "video",
+                    "gif": "gif",
+                    
+                    // Nudity level
+                    "non_nude": "sin desnudos",
+                    "topless": "topless",
+                    "fully_nude": "completamente desnuda",
+                    "censored": "censurado",
+                    
+                    // Visible body parts
+                    "ass_visible": "trasero visible",
+                    "asshole_visible": "ano visible",
+                    "pussy_visible": "vagina visible",
+                    "tits_visible": "pechos visibles",
+                    "focus_on_eyes": "enfoque en ojos",
+                    "focus_on_mouth": "enfoque en boca",
+                    "pennis_visible": "pene visible",
+                    "focus_on_feet": "enfoque en pies",
+                    
+                    // Hair color
+                    "blonde_hair": "pelo rubio",
+                    "brown_hair": "pelo castaño",
+                    "black_hair": "pelo negro",
+                    "silver_hair": "pelo plateado",
+                    "white_hair": "pelo blanco",
+                    "blue_hair": "pelo azul",
+                    "green_hair": "pelo verde",
+                    "purple_hair": "pelo morado",
+                    "pink_hair": "pelo rosa",
+                    "orange_hair": "pelo naranja",
+                    
+                    // Hair length
+                    "bald": "calva",
+                    "short_hair": "pelo corto",
+                    "medium_hair": "pelo medio",
+                    "long_hair": "pelo largo",
+                    
+                    // Age
+                    "young_adult": "adulta joven",
+                    "adult": "adulta",
+                    "milf": "milf",
+                    
+                    // Aesthetic styles
+                    "goth": "gótica",
+                    "emo": "emo",
+                    "alt_girl": "alternativa",
+                    "punk": "punk",
+                    "nerdy": "nerd",
+                    "gamer_girl": "gamer",
+                    
+                    // Unique features
+                    "freckles": "pecas",
+                    "braces": "frenos",
+                    "shaved_head": "cabeza rapada",
+                    "big_areolas": "areolas grandes",
+                    "lactation": "lactancia",
+                    "hairy": "velluda",
+                    
+                    // Tattoos and piercings
+                    "tattooed": "tatuada",
+                    "pierced": "con piercings",
+                    "nipple_piercing": "piercing en pezón",
+                    "tongue_piercing": "piercing en lengua",
+                    "belly_piercing": "piercing en ombligo",
+                    
+                    // Skin tone
+                    "white_skin": "piel blanca",
+                    "fair_skin": "piel clara",
+                    "tan_skin": "piel bronceada",
+                    "olive_skin": "piel oliva",
+                    "dark_skin": "piel oscura",
+                    "brown_skin": "piel morena",
+                    
+                    // Ethnicity
+                    "latina": "latina",
+                    "asian": "asiática",
+                    "ebony": "ebony",
+                    "caucasian": "caucásica",
+                    "middle_eastern": "de oriente medio",
+                    "native_american": "nativa americana",
+                    "mixed": "mestiza",
+                    
+                    // Nationality
+                    "argentinian": "argentina",
+                    "colombian": "colombiana",
+                    "brazilian": "brasileña",
+                    "venezuelan": "venezolana",
+                    "chilean": "chilena",
+                    
+                    // Height
+                    "petite": "menuda",
+                    "tall": "alta",
+                    "average_height": "estatura media",
+                    
+                    // Body type
+                    "slim_body": "cuerpo delgado",
+                    "curvy_body": "cuerpo curvilíneo",
+                    "thick_body": "cuerpo thick",
+                    "hourglass_body": "cuerpo reloj de arena",
+                    "bbw_body": "cuerpo bbw (Big Beautiful Woman)",
+                    "fit_body": "cuerpo en forma (fit)",
+                    
+                    // Bust size
+                    "small_boobs": "pechos pequeños",
+                    "medium_boobs": "pechos medianos",
+                    "large_boobs": "pechos grandes",
+                    "fake_tits": "tetas falsas",
+                    "natural_tits": "tetas naturales",
+                    "perky_tits": "tetas respingonas",
+                    
+                    // Butt and hips
+                    "small_butt": "trasero pequeño",
+                    "tight_butt": "trasero firme",
+                    "big_butt": "trasero grande",
+                    "thick_ass": "culo gordo (thick ass)",
+                    "wide_hips": "caderas anchas"
+                }
+            }
+        };
+
+        // Current language
+        let currentLanguage = 'en';
+
+        // Track selected tags
+        const selectedTags = new Set();
+
+        // Translate text based on current language
+        function translateText(text, type) {
+            if (currentLanguage === 'en') {
+                return text;
+            }
+            
+            if (type === 'category') {
+                return TRANSLATIONS[currentLanguage].categories[text] || text;
+            } else if (type === 'ui') {
+                return TRANSLATIONS[currentLanguage].ui[text] || text;
+            } else if (type === 'tag') {
+                return TRANSLATIONS[currentLanguage].tags[text] || text.replace(/_/g, ' ');
+            }
+            
+            return text;
+        }
+
+        // Generate tag sections
+        function generateTagSections(container, tagsObj) {
+            container.innerHTML = ''; // Clear container
+            
+            for (const [category, tags] of Object.entries(tagsObj)) {
+                // Create category section
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                
+                // Create category heading with translation
+                const heading = document.createElement('h3');
+                heading.textContent = translateText(category, 'category');
+                section.appendChild(heading);
+                
+                // Create tags container
+                const tagsContainer = document.createElement('div');
+                tagsContainer.className = 'tags-container';
+                
+                // Add tag buttons
+                tags.forEach(tag => {
+                    const button = document.createElement('button');
+                    button.className = 'tag-button';
+                    button.textContent = translateText(tag, 'tag');
+                    button.dataset.tag = tag; // Keep original tag value
+                    
+                    if (selectedTags.has(tag)) {
+                        button.classList.add('selected');
+                    }
+                    
+                    button.addEventListener('click', () => {
+                        toggleTag(button, tag);
+                    });
+                    
+                    tagsContainer.appendChild(button);
+                });
+                
+                section.appendChild(tagsContainer);
+                container.appendChild(section);
+            }
+        }
+
+        // Toggle tag selection
+        function toggleTag(button, tag) {
+            if (selectedTags.has(tag)) {
+                selectedTags.delete(tag);
+                button.classList.remove('selected');
+            } else {
+                selectedTags.add(tag);
+                button.classList.add('selected');
+            }
+            updateResult();
+        }
+
+        // Update result text - keep original English tag names
+        function updateResult() {
+            const resultElement = document.getElementById('result');
+            if (selectedTags.size === 0) {
+                resultElement.textContent = translateText('Select tags to see them here', 'ui');
+            } else {
+                resultElement.textContent = Array.from(selectedTags).join(', ');
+            }
+        }
+
+        // Switch language
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update UI text elements
+            document.querySelector('h1').textContent = translateText('Content Tag Selector', 'ui');
+            document.querySelector('header p').textContent = translateText('Select tags for your content by clicking on them', 'ui');
+            document.querySelectorAll('.tab-button')[0].textContent = translateText('Content Tags', 'ui');
+            document.querySelectorAll('.tab-button')[1].textContent = translateText('Profile Tags', 'ui');
+            document.querySelector('.result-section h3').textContent = translateText('Selected Tags', 'ui');
+            
+            const copyButton = document.getElementById('copyButton');
+            if (!copyButton.classList.contains('copied')) {
+                copyButton.textContent = translateText('Copy Tags', 'ui');
+            } else {
+                copyButton.textContent = translateText('✓ Copied!', 'ui');
+            }
+            
+            // Update result placeholder if empty
+            const resultElement = document.getElementById('result');
+            if (selectedTags.size === 0) {
+                resultElement.textContent = translateText('Select tags to see them here', 'ui');
+            }
+            
+            // Update language buttons
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+            document.getElementById('lang-es').classList.toggle('active', lang === 'es');
+            
+            // Regenerate tag buttons
+            generateTagSections(
+                document.getElementById('categorized-content'),
+                CATEGORIZED_TAGS
+            );
+            generateTagSections(
+                document.getElementById('profile-content'),
+                PROFILE_TAGS
+            );
+        }
+
+        // Copy result to clipboard
+        document.getElementById('copyButton').addEventListener('click', function() {
+            const resultText = document.getElementById('result').textContent;
+            if (resultText !== translateText('Select tags to see them here', 'ui')) {
+                navigator.clipboard.writeText(resultText).then(() => {
+                    this.textContent = translateText('✓ Copied!', 'ui');
+                    this.classList.add('copied');
+                    setTimeout(() => {
+                        this.textContent = translateText('Copy Tags', 'ui');
+                        this.classList.remove('copied');
+                    }, 2000);
+                });
+            }
+        });
+
+        // Language button event listeners
+        document.getElementById('lang-en').addEventListener('click', () => switchLanguage('en'));
+        document.getElementById('lang-es').addEventListener('click', () => switchLanguage('es'));
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update active tab button
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update active tab content
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabName}-content`).classList.add('active');
+            });
+        });
+
+        // Initialize page
+        window.addEventListener('DOMContentLoaded', () => {
+            // Generate tag sections
+            generateTagSections(
+                document.getElementById('categorized-content'),
+                CATEGORIZED_TAGS
+            );
+            generateTagSections(
+                document.getElementById('profile-content'),
+                PROFILE_TAGS
+            );
+        });
+    </script>
+</body>
+</html>
